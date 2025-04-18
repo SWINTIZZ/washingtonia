@@ -28,7 +28,7 @@ import { AnimatedButton, SmallAnimatedButton } from "@/components/animated-butto
 import TractorAnimation from "@/components/tractor-animation"
 import EnvelopeAnimation from "@/components/envelope-animation"
 import ShoppingBagAnimation from "@/components/shopping-bag-animation"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"; // Add this import
 
 // Type pour les produits
 interface Product {
@@ -44,9 +44,20 @@ interface Product {
   rating?: number
 }
 
-export default function Home() {
+const AdminChecker = ({ setIsAdmin }: { setIsAdmin: (value: boolean) => void }) => {
   const searchParams = useSearchParams()
   const adminToken = searchParams.get("adminToken")
+
+  useEffect(() => {
+    if (adminToken === "admin123") {
+      setIsAdmin(true)
+    }
+  }, [adminToken, setIsAdmin])
+
+  return null // This component doesn't render anything
+}
+
+export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
@@ -82,15 +93,6 @@ export default function Home() {
     certification: "",
     rating: 5,
   })
-
-  // Vérifier si l'utilisateur est un administrateur
-  useEffect(() => {
-    // Dans un cas réel, vous utiliseriez une authentification sécurisée
-    // Ici, nous utilisons simplement un token dans l'URL pour la démonstration
-    if (adminToken === "admin123") {
-      setIsAdmin(true)
-    }
-  }, [adminToken])
 
   // Scroll to content when section changes
   useEffect(() => {
@@ -683,6 +685,7 @@ export default function Home() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
+      <AdminChecker setIsAdmin={setIsAdmin} />
       <div className="min-h-screen bg-white pb-32">
         {/* Admin Panel */}
         {isAdmin && (
